@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/menu_home"
+        android:title="Home" />
+
+    <item
+        android:id="@+id/pokedexFragment"
+        android:enabled="false"
+        android:title="" />
+
+    <item
+        android:id="@+id/infoFragment"
+        android:icon="@drawable/menu_info"
+        android:title="Info" />
+
+</menu>
