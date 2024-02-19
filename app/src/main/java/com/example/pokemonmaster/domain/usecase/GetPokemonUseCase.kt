@@ -26,7 +26,7 @@ class GetPokemonUseCase @Inject constructor(
             val name = species.names.firstOrNull { it.language.name == "ko" }?.name ?: "Error"
             val genera = species.genera.firstOrNull { it.language.name == "ko" }?.genus ?: "Error"
 //            val image = pokemon.sprites.front_default // png
-            val image = pokemon.sprites.other.showdown.front_default //gif
+            val image = pokemon.sprites.versions.generation_v.black_white.animated.front_default //gif
             val types = pokemon.types.map { it.type.name }
             pokemons.add(PokemonEntity(name, id, image, genera, types))
         }

@@ -1,11 +1,17 @@
 package com.example.pokemonmaster.ui.home
 
+import android.os.Build.VERSION.SDK_INT
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil.ImageLoader
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import coil.load
+import coil.request.Disposable
+import coil.request.ImageRequest
 import com.example.pokemonmaster.databinding.ItemPokemonBinding
 import com.example.pokemonmaster.domain.entity.PokemonEntity
 
@@ -26,8 +32,24 @@ class HomeAdapter: ListAdapter<PokemonEntity, HomeAdapter.HomeViewHolder>(diffUt
                 tvName.text = item.name
                 tvNumber.text = "# ${item.number}"
                 tvGenera.text = item.genera
-                ivPokemon.load(item.image)
+                setImageGif(item)
             }
+        }
+
+        private fun ItemPokemonBinding.setImageGif(item: PokemonEntity): Disposable {
+            val imageLoader = ImageLoader.Builder(ivPokemon.context)
+                .components {
+                    if (SDK_INT >= 28) {
+                        add(ImageDecoderDecoder.Factory())
+                    } else {
+                        add(GifDecoder.Factory())
+                    }
+                }.build()
+            val request = ImageRequest.Builder(ivPokemon.context)
+                .data(item.image)
+                .target(ivPokemon)
+                .build()
+            return imageLoader.enqueue(request)
         }
     }
 

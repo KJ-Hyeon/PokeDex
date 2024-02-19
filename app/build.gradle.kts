@@ -63,4 +63,5 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.48")
     //coil
     implementation("io.coil-kt:coil:2.5.0")
+    implementation("io.coil-kt:coil-gif:2.5.0")
 }
