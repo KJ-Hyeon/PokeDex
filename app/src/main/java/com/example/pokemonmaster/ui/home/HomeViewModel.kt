@@ -21,10 +21,10 @@ class HomeViewModel @Inject constructor(
     private val getPokemonUseCase: GetPokemonUseCase
 ) : ViewModel() {
 
-    private val _pokemon: MutableLiveData<List<PokemonEntity>> = MutableLiveData()
+    private val _pokemon: MutableLiveData<MutableList<PokemonEntity>> = MutableLiveData()
     private val _speciesInfo: MutableLiveData<SpeciesPageResponse> = MutableLiveData()
 
-    val pokemon: LiveData<List<PokemonEntity>> get() = _pokemon
+    val pokemon: LiveData<MutableList<PokemonEntity>> get() = _pokemon
     val speciesInfo: LiveData<SpeciesPageResponse> get() = _speciesInfo
 
 
@@ -39,7 +39,9 @@ class HomeViewModel @Inject constructor(
     fun getPokemon(speciesUrls: List<Result>) {
         viewModelScope.launch {
             getPokemonUseCase(speciesUrls).let {
-                _pokemon.value = it
+                val pokemonList = _pokemon.value ?: mutableListOf()
+                pokemonList.addAll(it)
+                _pokemon.value = pokemonList
             }
 //            _pokemon.value = getPokemonUseCase(speciesUrls)
         }
