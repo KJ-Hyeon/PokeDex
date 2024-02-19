@@ -1,23 +1,26 @@
 package com.example.pokemonmaster.data.remote.retrofit
 
-import com.example.pokemonmaster.data.remote.dto.pokemon.Pokemon
-import com.example.pokemonmaster.data.remote.dto.species.PokemonSpeciesResponse
+import com.example.pokemonmaster.data.remote.dto.pokemon.PokemonResponse
+import com.example.pokemonmaster.data.remote.dto.species.SpeciesResponse
+import com.example.pokemonmaster.data.remote.dto.speciespage.SpeciesPageResponse
 import retrofit2.http.GET
-import retrofit2.http.Query
+import retrofit2.http.Path
 import retrofit2.http.Url
 
 interface PokeService {
 
-    @GET("pokemon-species")
-    suspend fun getPokemonSpecies(): com.example.pokemonmaster.data.remote.dto.species.PokemonSpeciesResponse
-
     @GET
-    suspend fun getNextPokemonSpecies(
+    suspend fun getPokemonSpeciesPage(
         @Url url: String
-    ): com.example.pokemonmaster.data.remote.dto.species.PokemonSpeciesResponse
+    ): SpeciesPageResponse
 
     @GET
-    suspend fun getPokemon(
+    suspend fun getPokemonSpecies(
         @Url url: String // url 자체를 요청을 보냄
-    ): com.example.pokemonmaster.data.remote.dto.pokemon.Pokemon
+    ): SpeciesResponse
+
+    @GET("pokemon/{id}")
+    suspend fun getPokemon(
+        @Path("id") id: String
+    ): PokemonResponse
 }
