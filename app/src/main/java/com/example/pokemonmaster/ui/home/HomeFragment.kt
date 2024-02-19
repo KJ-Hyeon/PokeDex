@@ -7,10 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import com.example.pokemonmaster.R
-import com.example.pokemonmaster.data.remote.dto.pokemon.Home
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.pokemonmaster.databinding.FragmentHomeBinding
-import dagger.hilt.EntryPoint
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -53,6 +52,22 @@ class HomeFragment : Fragment() {
     }
 
     private fun initHomRecyclerView() {
-        binding.revHome.adapter = homeAdapter
+        with(binding.revHome) {
+            adapter = homeAdapter
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    checkLastItem(recyclerView)
+                }
+            })
+        }
+    }
+
+    private fun checkLastItem(rev: RecyclerView) {
+        val layoutManager = rev.layoutManager as LinearLayoutManager
+        val lastItemPosition = layoutManager.findLastVisibleItemPosition()
+        val totalItemCount = layoutManager.itemCount
+
+
     }
 }
