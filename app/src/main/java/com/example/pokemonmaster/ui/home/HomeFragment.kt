@@ -19,9 +19,8 @@ class HomeFragment : Fragment() {
     private val homeViewModel: HomeViewModel by viewModels()
     private val homeAdapter: HomeAdapter by lazy { HomeAdapter() }
     private val loadingDialogFragment by lazy { LoadingDialogFragment() }
-    private var recyclerViewState: Parcelable? = null
-    private var isLoading: Boolean = false
     private var nextPageUrl: String? = null
+    private var isLoading = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,15 +49,24 @@ class HomeFragment : Fragment() {
         homeViewModel.speciesInfo.observe(viewLifecycleOwner) {
             homeViewModel.getPokemon(it.results)
             nextPageUrl = it.next
-            isLoading = false
-
-            if (loadingDialogFragment.isVisible) {
-//                loadingDialogFragment.dismiss()
-            }
         }
         homeViewModel.pokemon.observe(viewLifecycleOwner) {
             homeAdapter.submitList(it)
+            if (loadingDialogFragment.isVisible) {
+                loadingDialogFragment.dismiss()
+                isLoading = false
+            }
         }
+
+//        homeViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+//            if (isLoading) {
+//                this.isLoading = isLoading
+//                loadingDialogFragment.show(parentFragmentManager, "loadingDialog")
+//            } else {
+//                this.isLoading = isLoading
+//                if (loadingDialogFragment.isVisible) loadingDialogFragment.dismiss()
+//            }
+//        }
     }
 
     private fun initHomRecyclerView() {
@@ -79,9 +87,10 @@ class HomeFragment : Fragment() {
         val totalItemCount = layoutManager.itemCount
 
         if (!isLoading && lastItemPosition == totalItemCount - 3) {
-            isLoading = true
-            loadingDialogFragment.show(parentFragmentManager, "Loading")
             homeViewModel.getSpeciesPage(nextPageUrl?:"")
+            loadingDialogFragment.show(parentFragmentManager, "loadingDialog")
+            isLoading = true
+//            homeViewModel.setLoading()
         }
     }
 

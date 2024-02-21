@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.DialogFragment
 import com.example.pokemonmaster.R
 import com.example.pokemonmaster.databinding.DialogLoadingBinding
@@ -23,13 +24,7 @@ class LoadingDialogFragment: DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        val animation = AnimationUtils.loadAnimation(context, R.anim.loading_animation)
-//        with(binding) {
-//            ivLoading1.startAnimation(animation)
-//            ivLoading2.startAnimation(animation)
-//            ivLoading3.startAnimation(animation)
-//        }
-        binding.dialogMotion.transitionToStart()
+
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

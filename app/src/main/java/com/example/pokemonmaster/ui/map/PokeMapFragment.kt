@@ -28,6 +28,6 @@ class PokeMapFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onMapReady(naverMap: NaverMap) {
-        TODO("Not yet implemented")
+
     }
 }

@@ -48,6 +48,7 @@ class HomeViewModel @Inject constructor(
             }
             pokemonList.sortBy { it.number?.toInt() }
             _pokemon.value = pokemonList
+//            _isLoading.value = false
         }
     }
 }
