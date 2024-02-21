@@ -18,7 +18,7 @@ class HomeFragment : Fragment() {
     private val binding: FragmentHomeBinding by lazy { FragmentHomeBinding.inflate(layoutInflater) }
     private val homeViewModel: HomeViewModel by viewModels()
     private val homeAdapter: HomeAdapter by lazy { HomeAdapter() }
-    private val loadingDialogFragment by lazy { LoadingDialogFragment() }
+//    private val loadingDialogFragment by lazy { LoadingDialogFragment() }
     private var nextPageUrl: String? = null
     private var isLoading = false
 
@@ -52,21 +52,12 @@ class HomeFragment : Fragment() {
         }
         homeViewModel.pokemon.observe(viewLifecycleOwner) {
             homeAdapter.submitList(it)
-            if (loadingDialogFragment.isVisible) {
-                loadingDialogFragment.dismiss()
+            val loadingDialogFragment = parentFragmentManager.findFragmentByTag("loadingDialog") as? LoadingDialogFragment
+            loadingDialogFragment?.let {fragment ->
+                fragment.dismiss()
                 isLoading = false
             }
         }
-
-//        homeViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-//            if (isLoading) {
-//                this.isLoading = isLoading
-//                loadingDialogFragment.show(parentFragmentManager, "loadingDialog")
-//            } else {
-//                this.isLoading = isLoading
-//                if (loadingDialogFragment.isVisible) loadingDialogFragment.dismiss()
-//            }
-//        }
     }
 
     private fun initHomRecyclerView() {
@@ -88,9 +79,8 @@ class HomeFragment : Fragment() {
 
         if (!isLoading && lastItemPosition == totalItemCount - 3) {
             homeViewModel.getSpeciesPage(nextPageUrl?:"")
-            loadingDialogFragment.show(parentFragmentManager, "loadingDialog")
+            LoadingDialogFragment().show(parentFragmentManager, "loadingDialog")
             isLoading = true
-//            homeViewModel.setLoading()
         }
     }
 
