@@ -8,7 +8,9 @@ import com.example.pokemonmaster.data.remote.dto.species.Pokemon
 import com.example.pokemonmaster.data.remote.dto.speciespage.Result
 import com.example.pokemonmaster.data.remote.dto.speciespage.SpeciesPageResponse
 import com.example.pokemonmaster.data.repository.NetworkRepositoryImpl
+import com.example.pokemonmaster.data.repository.PokemonWithSpecies
 import com.example.pokemonmaster.domain.entity.PokemonEntity
+import com.example.pokemonmaster.domain.entity.SpeciesPageEntity
 import com.example.pokemonmaster.domain.usecase.GetPokemonUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -21,30 +23,45 @@ class HomeViewModel @Inject constructor(
     private val getPokemonUseCase: GetPokemonUseCase
 ) : ViewModel() {
 
-    private val _pokemon: MutableLiveData<MutableList<PokemonEntity>> = MutableLiveData()
-    private val _speciesInfo: MutableLiveData<SpeciesPageResponse> = MutableLiveData()
+    // entity를 받아서
+    private val _pokemon: MutableLiveData<MutableList<HomePokeItem>> = MutableLiveData()
+    private val _speciesInfo: MutableLiveData<PageInfo> = MutableLiveData()
 
-    val pokemon: LiveData<MutableList<PokemonEntity>> get() = _pokemon
-    val speciesInfo: LiveData<SpeciesPageResponse> get() = _speciesInfo
+    val pokemon: LiveData<MutableList<HomePokeItem>> get() = _pokemon
+    val speciesInfo: LiveData<PageInfo> get() = _speciesInfo
 
 
     fun getSpeciesPage(pageUrl: String) {
         viewModelScope.launch {
-            _speciesInfo.value = networkRepositoryImpl.getPokemonSpeciesPage(
+            val pageInfo = networkRepositoryImpl.getPokemonSpeciesPage(
                 pageUrl.ifEmpty { "pokemon-species" }
-            )
+            ).convertPageInfo()
+            _speciesInfo.value = pageInfo
         }
     }
 
-    fun getPokemon(speciesUrls: List<Result>) {
+    fun getPokemon(speciesUrls: List<String>) {
         viewModelScope.launch {
-            getPokemonUseCase(speciesUrls).let {
-                val pokemonList = _pokemon.value ?: mutableListOf()
-                pokemonList.addAll(it)
-                _pokemon.value = pokemonList
+            val pokemonList = _pokemon.value ?: mutableListOf()
+            getPokemonUseCase(speciesUrls).forEach {
+                pokemonList.add(it.convertPokemon())
             }
-//            _pokemon.value = getPokemonUseCase(speciesUrls)
+            pokemonList.sortBy { it.number?.toInt() }
+            _pokemon.value = pokemonList
         }
     }
-
 }
+
+private fun PokemonWithSpecies.convertPokemon() = HomePokeItem(
+    // usercase에서 return 받은 entity로 pokemon dataclass 구성
+    name = this.sepecies.name,
+    number = this.sepecies.id.toString(),
+    image = this.pokemon.sprites,
+    genera = this.sepecies.genera,
+    type = this.pokemon.types
+)
+
+private fun SpeciesPageEntity.convertPageInfo() = PageInfo(
+    next = this.next,
+    results = this.results
+)

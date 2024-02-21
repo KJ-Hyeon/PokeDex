@@ -15,6 +15,12 @@
         android:name=".MainApplication"
         android:theme="@style/Base.Theme.PokemonMaster"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="jhu2dokfje"
+            />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

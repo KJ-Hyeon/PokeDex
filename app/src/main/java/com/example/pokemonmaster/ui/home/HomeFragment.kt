@@ -18,9 +18,10 @@ class HomeFragment : Fragment() {
     private val binding: FragmentHomeBinding by lazy { FragmentHomeBinding.inflate(layoutInflater) }
     private val homeViewModel: HomeViewModel by viewModels()
     private val homeAdapter: HomeAdapter by lazy { HomeAdapter() }
+    private val loadingDialogFragment by lazy { LoadingDialogFragment() }
     private var recyclerViewState: Parcelable? = null
     private var isLoading: Boolean = false
-    private lateinit var nextPageUrl: String
+    private var nextPageUrl: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +51,10 @@ class HomeFragment : Fragment() {
             homeViewModel.getPokemon(it.results)
             nextPageUrl = it.next
             isLoading = false
+
+            if (loadingDialogFragment.isVisible) {
+//                loadingDialogFragment.dismiss()
+            }
         }
         homeViewModel.pokemon.observe(viewLifecycleOwner) {
             homeAdapter.submitList(it)
@@ -59,9 +64,6 @@ class HomeFragment : Fragment() {
     private fun initHomRecyclerView() {
         with(binding.revHome) {
             adapter = homeAdapter
-            post {
-                layoutManager?.onRestoreInstanceState(recyclerViewState)
-            }
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
@@ -78,8 +80,8 @@ class HomeFragment : Fragment() {
 
         if (!isLoading && lastItemPosition == totalItemCount - 3) {
             isLoading = true
-            Log.d("HomeFragment","HomeFragment: load next page")
-            homeViewModel.getSpeciesPage(nextPageUrl)
+            loadingDialogFragment.show(parentFragmentManager, "Loading")
+            homeViewModel.getSpeciesPage(nextPageUrl?:"")
         }
     }
 

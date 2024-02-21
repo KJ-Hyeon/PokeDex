@@ -10,4 +10,11 @@
         android:name="com.example.pokemonmaster.ui.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.pokemonmaster.ui.map.PokeMapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" />
+
 </navigation>

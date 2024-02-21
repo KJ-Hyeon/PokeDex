@@ -1,6 +1,7 @@
 package com.example.pokemonmaster.ui.home
 
 import android.os.Build.VERSION.SDK_INT
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -15,7 +16,7 @@ import coil.request.ImageRequest
 import com.example.pokemonmaster.databinding.ItemPokemonBinding
 import com.example.pokemonmaster.domain.entity.PokemonEntity
 
-class HomeAdapter: ListAdapter<PokemonEntity, HomeAdapter.HomeViewHolder>(diffUtil) {
+class HomeAdapter: ListAdapter<HomePokeItem, HomeAdapter.HomeViewHolder>(diffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -27,7 +28,8 @@ class HomeAdapter: ListAdapter<PokemonEntity, HomeAdapter.HomeViewHolder>(diffUt
     }
 
     inner class HomeViewHolder(private val binding: ItemPokemonBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: PokemonEntity) {
+        fun bind(item: HomePokeItem) {
+            Log.d("HomeAdapter:","HomeAdapter:$item")
             with(binding) {
                 tvName.text = item.name
                 tvNumber.text = "# ${item.number}"
@@ -36,7 +38,7 @@ class HomeAdapter: ListAdapter<PokemonEntity, HomeAdapter.HomeViewHolder>(diffUt
             }
         }
 
-        private fun ItemPokemonBinding.setImageGif(item: PokemonEntity): Disposable {
+        private fun ItemPokemonBinding.setImageGif(item: HomePokeItem): Disposable {
             val imageLoader = ImageLoader.Builder(ivPokemon.context)
                 .components {
                     if (SDK_INT >= 28) {
@@ -54,13 +56,13 @@ class HomeAdapter: ListAdapter<PokemonEntity, HomeAdapter.HomeViewHolder>(diffUt
     }
 
     companion object {
-        val diffUtil = object : DiffUtil.ItemCallback<PokemonEntity>() {
-            override fun areItemsTheSame(oldItem: PokemonEntity, newItem: PokemonEntity): Boolean {
+        val diffUtil = object : DiffUtil.ItemCallback<HomePokeItem>() {
+            override fun areItemsTheSame(oldItem: HomePokeItem, newItem: HomePokeItem): Boolean {
                 return oldItem.name == newItem.number
             }
 
             override fun areContentsTheSame(
-                oldItem: PokemonEntity, newItem: PokemonEntity): Boolean {
+                oldItem: HomePokeItem, newItem: HomePokeItem): Boolean {
                 return oldItem == newItem
             }
         }
