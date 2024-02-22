@@ -67,4 +67,5 @@ dependencies {
     implementation("io.coil-kt:coil-gif:2.5.0")
     // 네이버 지도 SDK
     implementation("com.naver.maps:map-sdk:3.17.0")
+    implementation ("com.google.android.gms:play-services-location:21.1.0")
 }
