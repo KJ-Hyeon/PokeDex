@@ -1,5 +1,6 @@
 package com.example.pokemonmaster.ui.home
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,6 +15,7 @@ import com.example.pokemonmaster.domain.entity.SpeciesPageEntity
 import com.example.pokemonmaster.domain.usecase.GetPokemonUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,7 +24,7 @@ class HomeViewModel @Inject constructor(
     private val networkRepositoryImpl: NetworkRepositoryImpl,
     private val getPokemonUseCase: GetPokemonUseCase
 ) : ViewModel() {
-
+    private var currentJob: Job? = null
     // entity를 받아서
     private val _pokemon: MutableLiveData<MutableList<HomePokeItem>> = MutableLiveData()
     private val _speciesInfo: MutableLiveData<PageInfo> = MutableLiveData()
@@ -33,6 +35,7 @@ class HomeViewModel @Inject constructor(
 
     fun getSpeciesPage(pageUrl: String) {
         viewModelScope.launch {
+            Log.d("HomeViewModel:","HomeViewModel Get SpeciesPage 진입")
             val pageInfo = networkRepositoryImpl.getPokemonSpeciesPage(
                 pageUrl.ifEmpty { "pokemon-species" }
             ).convertPageInfo()
@@ -41,14 +44,14 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getPokemon(speciesUrls: List<String>) {
-        viewModelScope.launch {
-            val pokemonList = _pokemon.value ?: mutableListOf()
+        currentJob?.cancel()
+        val pokemonList = _pokemon.value ?: mutableListOf()
+        currentJob = viewModelScope.launch {
             getPokemonUseCase(speciesUrls).forEach {
                 pokemonList.add(it.convertPokemon())
             }
             pokemonList.sortBy { it.number?.toInt() }
             _pokemon.value = pokemonList
-//            _isLoading.value = false
         }
     }
 }
