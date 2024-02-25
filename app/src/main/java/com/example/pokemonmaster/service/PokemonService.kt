@@ -15,6 +15,8 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.navigation.NavDeepLinkBuilder
+import com.example.pokemonmaster.MainActivity
 import com.example.pokemonmaster.R
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -75,13 +77,13 @@ class PokemonService: Service() {
     }
 
     private fun createNotification(): Notification {
-        val resultIntent = Intent()
-        val pendingIntent = PendingIntent.getActivity(
-            applicationContext,
-            0,
-            resultIntent,
-            PendingIntent.FLAG_IMMUTABLE
-        )
+        // navigation을 통한 fragment의 전환이 이루어지기때문에 NavDeepLinkBuilder를 사용
+        // TODO: mapFragment에 진입할 때마다 서비스 notification이 뜨는데 이걸 앱을 대기 상태에 올려두었을 때 뜨는 방식으로 아마도 생명주기 onPause()를 이용하면 되지않을까?
+
+        val pendingIntent = NavDeepLinkBuilder(applicationContext)
+            .setGraph(R.navigation.navigation)
+            .setDestination(R.id.mapFragment)
+            .createPendingIntent()
 
         val builder = NotificationCompat.Builder(this, channelId).apply {
             setSmallIcon(R.drawable.item_pokemon_ball) // 작은 아이콘 설정

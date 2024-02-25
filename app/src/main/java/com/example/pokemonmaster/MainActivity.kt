@@ -11,22 +11,27 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.pokemonmaster.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import android.Manifest
+import android.content.Intent
 import android.os.Build
 import androidx.core.app.ActivityCompat
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import com.naver.maps.map.util.FusedLocationSource
 
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+    private lateinit var navHost: NavHostFragment
+    private lateinit var navController: NavController
     lateinit var locationSource: FusedLocationSource
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        val navHost = supportFragmentManager.findFragmentById(R.id.nav_host_main_container) as NavHostFragment
-        val navController = navHost.findNavController()
+        navHost = supportFragmentManager.findFragmentById(R.id.nav_host_main_container) as NavHostFragment
+        navController = navHost.findNavController()
 
         binding.bottomNavigation.setupWithNavController(navController)
         checkPermission()
