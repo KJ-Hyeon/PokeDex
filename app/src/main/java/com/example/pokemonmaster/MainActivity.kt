@@ -30,11 +30,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        checkPermission()
+
         navHost = supportFragmentManager.findFragmentById(R.id.nav_host_main_container) as NavHostFragment
         navController = navHost.findNavController()
-
         binding.bottomNavigation.setupWithNavController(navController)
-        checkPermission()
         locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
     }
 

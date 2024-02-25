@@ -1,5 +1,6 @@
 package com.example.pokemonmaster.ui.login
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -16,6 +17,7 @@ import kotlin.math.log
 class LoginActivity : AppCompatActivity() {
     private val binding: ActivityLoginBinding by lazy { ActivityLoginBinding.inflate(layoutInflater) }
     private val auth: FirebaseAuth by lazy { Firebase.auth }
+    private val userPref by lazy { getSharedPreferences("userPref", Context.MODE_PRIVATE) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -24,6 +26,11 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
+        if (userPref.getString("user", null) != null) {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
         initSignupButton()
         initLoginButton()
     }
@@ -49,6 +56,7 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, pw)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    userPref.edit().putString("user","${auth.currentUser?.email}").apply()
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                     finish()

@@ -23,7 +23,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 
-class PokemonService: Service() {
+class PokemonService : Service() {
     private val LOCATION_SERVICE_ID = 1000
     private val channelId = "location_channel"
     private val locationCallback = object : LocationCallback() {
@@ -32,7 +32,7 @@ class PokemonService: Service() {
             if (locationResult.lastLocation != null) {
                 val latitude = locationResult.lastLocation?.latitude
                 val longitude = locationResult.lastLocation?.longitude
-                Log.d("PokemonService:","PokemonService: $latitude, $longitude")
+                Log.d("PokemonService:", "PokemonService: $latitude, $longitude")
             }
         }
     }
@@ -49,7 +49,7 @@ class PokemonService: Service() {
         if (intent != null) {
             val action = intent.action
             action?.let { action ->
-                when(action) {
+                when (action) {
                     "startLocationService" -> startLocationService()
                     "stopLocationService" -> stopLocationService()
                 }
@@ -79,16 +79,16 @@ class PokemonService: Service() {
     private fun createNotification(): Notification {
         // navigation을 통한 fragment의 전환이 이루어지기때문에 NavDeepLinkBuilder를 사용
         // TODO: mapFragment에 진입할 때마다 서비스 notification이 뜨는데 이걸 앱을 대기 상태에 올려두었을 때 뜨는 방식으로 아마도 생명주기 onPause()를 이용하면 되지않을까?
-
-        val pendingIntent = NavDeepLinkBuilder(applicationContext)
+        val pendingIntent = NavDeepLinkBuilder(this)
             .setGraph(R.navigation.navigation)
-            .setDestination(R.id.mapFragment)
+            // MainActivity가 manifest에 설정된 기본 실행 Activity가 아니기 때문에 여기서 지정을 해줘야 함
+            .setComponentName(MainActivity::class.java)
+            .setDestination(R.id.mapFragment, null)
             .createPendingIntent()
 
         val builder = NotificationCompat.Builder(this, channelId).apply {
             setSmallIcon(R.drawable.item_pokemon_ball) // 작은 아이콘 설정
             setContentTitle("Location Service") // 알림의 제목
-            setDefaults(NotificationCompat.DEFAULT_ALL) // 사운드, 진동 및 라이트를 포함한 모든 기본 알림 속성
             setContentText("Run") // 본문 텍스트
             setContentIntent(pendingIntent) // 알림이 터치 되었을 경우, 실행 될 pendingIntent 설정
             setAutoCancel(false) // 알림을 터치해도 자동으로 취소가 되지않는다.
@@ -120,11 +120,15 @@ class PokemonService: Service() {
             .requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
         createNotificationChannel()
         //         foreground 서비스를 시작 , 파라미터는 notification을 위한 요소들
-        startForeground(LOCATION_SERVICE_ID, createNotification()) // setNotification의 builder가 들어가야함
+        startForeground(
+            LOCATION_SERVICE_ID,
+            createNotification()
+        ) // setNotification의 builder가 들어가야함
     }
 
     private fun stopLocationService() {
-        LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(locationCallback)
+        LocationServices.getFusedLocationProviderClient(this)
+            .removeLocationUpdates(locationCallback)
         stopForeground(STOP_FOREGROUND_REMOVE) // foreground 서비스 종료 및 노티피케이션 제거
         stopSelf() // 서비스 종료
     }
