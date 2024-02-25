@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "690855737510",
+    "project_id": "pokedex-1ee25",
+    "storage_bucket": "pokedex-1ee25.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:690855737510:android:1e98c3c1d4b5ddbc30dc67",
+        "android_client_info": {
+          "package_name": "com.example.pokemonmaster"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGYind4IJCx1ZLo3dkuyjHd4nRMPLCJX8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
